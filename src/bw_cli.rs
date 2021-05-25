@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::{bail, Context, Result};
 use chrono::{DateTime, Utc};
 use duct::cmd;
 use lazy_static::lazy_static;
@@ -17,6 +17,9 @@ pub fn login() -> Result<()> {
     let status = status().context("Failed to get status")?;
 
     let (email, password) = crate::gui::prompt_login(status.user_email)?;
+    if password.trim().len() == 0 {
+        bail!("Password with len 0? This can't be right, aborting before 'bw login' stalls")
+    }
 
     let session = if VaultStatus::UNAUTHENTICATED == status.vault_status {
         info!("Logging in...");
