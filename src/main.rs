@@ -1,4 +1,5 @@
 mod bw_cli;
+mod gui;
 
 use chrono;
 use fern;

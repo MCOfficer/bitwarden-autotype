@@ -15,9 +15,8 @@ lazy_static! {
 
 pub fn login() -> Result<()> {
     let status = status().context("Failed to get status")?;
-    dbg!(&status);
 
-    let (email, password) = prompt_credentials(&status)?;
+    let (email, password) = crate::gui::prompt_login(status.user_email)?;
 
     let session = if VaultStatus::UNAUTHENTICATED == status.vault_status {
         info!("Logging in...");
@@ -26,7 +25,6 @@ pub fn login() -> Result<()> {
         info!("Already logged in, unlocking vault...");
         call_bw(vec!["unlock", "--raw", &password])?
     };
-
     info!("Acquired session key");
 
     let mut guard = SESSION_KEY.write();
@@ -35,28 +33,6 @@ pub fn login() -> Result<()> {
 
     Ok(())
 }
-
-fn prompt_credentials(status: &Status) -> Result<(String, String)> {
-    let email = match status.user_email.clone() {
-        None => {
-            println!("E-Mail:");
-            let mut email = String::new();
-            stdin().read_line(&mut email)?;
-            email
-        }
-        Some(email) => {
-            info!("Using E-Mail from Bitwarden: {}", email);
-            info!("If you want to use a different E-Mail, please use 'bw logout'");
-            email
-        }
-    };
-
-    let password =
-        rpassword::prompt_password_stdout("Password:\n").context("Failed to read password")?;
-
-    Ok((email.clone(), password))
-}
-
 #[derive(Debug, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
 enum VaultStatus {
