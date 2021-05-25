@@ -1,0 +1,17 @@
+[package]
+name = "bitwarden-autotype"
+version = "0.1.0"
+authors = ["MCOfficer <mcofficer@gmx.de>"]
+edition = "2018"
+
+[dependencies]
+anyhow = "1.0"
+chrono = { version = "0.4", features = ["serde"] }
+duct = "0.13"
+fern = { version = "0.6", features = ["date-based"], default_features = false }
+lazy_static = "1.4"
+log = "0.4"
+parking_lot = "0.11"
+rpassword = "5.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
