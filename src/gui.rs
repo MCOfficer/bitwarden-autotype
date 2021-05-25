@@ -9,6 +9,7 @@ use nwg::NativeUi;
 #[derive(Default, NwgUi)]
 pub struct LoginWindow {
     #[nwg_control(size: (300, 135), position: (300, 300), title: "Log into Bitwarden", flags: "WINDOW|VISIBLE")]
+    #[nwg_events(OnWindowClose: [LoginWindow::finish])]
     window: nwg::Window,
 
     #[nwg_control(size: (280, 35), position: (10, 10), focus: true, placeholder_text: Some("E-Mail"), flags: "TAB_STOP|AUTO_SCROLL|VISIBLE")]
@@ -18,12 +19,12 @@ pub struct LoginWindow {
     password_field: nwg::TextInput,
 
     #[nwg_control(text: "Login", position: (10, 90), )]
-    #[nwg_events(OnButtonClick: [LoginWindow::submit])]
+    #[nwg_events(OnButtonClick: [LoginWindow::finish])]
     submit_btn: nwg::Button,
 }
 
 impl LoginWindow {
-    fn submit(&self) {
+    fn finish(&self) {
         self.window.close();
         nwg::stop_thread_dispatch();
     }
