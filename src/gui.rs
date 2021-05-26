@@ -1,7 +1,6 @@
 extern crate native_windows_derive as nwd;
 extern crate native_windows_gui as nwg;
 
-use self::nwg::EventData;
 use anyhow::{Context, Result};
 use nwd::NwgUi;
 use nwg::NativeUi;

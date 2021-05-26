@@ -7,7 +7,6 @@ use log::info;
 use parking_lot::RwLock;
 use serde::Deserialize;
 use std::ffi::{OsStr, OsString};
-use std::io::stdin;
 
 lazy_static! {
     static ref SESSION_KEY: RwLock<Option<String>> = RwLock::new(None);

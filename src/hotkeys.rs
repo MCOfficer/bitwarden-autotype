@@ -1,9 +1,8 @@
 use log::{error, info};
-use win_key_codes::VK_A;
 use winapi::_core::{mem, ptr};
 use winapi::shared::ntdef::NULL;
-use winapi::um::winuser::{GetMessageW, UnregisterHotKey, MOD_ALT, MOD_CONTROL, MSG, WM_HOTKEY};
-use winapi::um::winuser::{RegisterHotKey, HWND_BOTTOM, HWND_MESSAGE};
+use winapi::um::winuser::RegisterHotKey;
+use winapi::um::winuser::{GetMessageW, UnregisterHotKey, WM_HOTKEY};
 
 pub fn register(modifier: isize, key: i32) {
     unregister();
