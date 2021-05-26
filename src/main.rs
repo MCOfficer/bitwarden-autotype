@@ -7,7 +7,6 @@ use chrono;
 use fern;
 use log::info;
 use log::LevelFilter;
-use std::time::Duration;
 use win_key_codes::VK_A;
 use winapi::um::winuser::{MOD_ALT, MOD_CONTROL};
 

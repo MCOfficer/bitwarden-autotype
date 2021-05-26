@@ -1,7 +1,10 @@
 extern crate native_windows_derive as nwd;
 extern crate native_windows_gui as nwg;
 
+use self::nwg::keys::RETURN;
+use self::nwg::EventData;
 use anyhow::{Context, Result};
+use log::info;
 use nwd::NwgUi;
 use nwg::NativeUi;
 
@@ -12,9 +15,12 @@ pub struct LoginWindow {
     window: nwg::Window,
 
     #[nwg_control(size: (280, 35), position: (10, 10), focus: true, placeholder_text: Some("E-Mail"), flags: "TAB_STOP|AUTO_SCROLL|VISIBLE")]
+    // Use OnKeyRelease because TextInput prevents OnKeyPress for the Enter key
+    #[nwg_events(OnKeyRelease: [LoginWindow::on_key(SELF, EVT_DATA)])]
     email_field: nwg::TextInput,
 
     #[nwg_control(size: (280, 35), position: (10, 50), placeholder_text: Some("Password"),  password: Some('*'))]
+    #[nwg_events(OnKeyRelease: [LoginWindow::on_key(SELF, EVT_DATA)])]
     password_field: nwg::TextInput,
 
     #[nwg_control(text: "Login", position: (10, 90), )]
@@ -27,6 +33,12 @@ impl LoginWindow {
         self.window.close();
         nwg::stop_thread_dispatch();
     }
+
+    fn on_key(&self, data: &EventData) {
+        if data.on_key() == RETURN {
+            self.finish();
+        };
+    }
 }
 
 pub fn prompt_login(email: Option<String>) -> Result<(String, String)> {
@@ -34,6 +46,7 @@ pub fn prompt_login(email: Option<String>) -> Result<(String, String)> {
     let app = LoginWindow::build_ui(Default::default()).context("Failed to build window")?;
 
     if let Some(email) = email {
+        info!("Using E-Mail known to BitWarden, use 'bw logout' if this is incorrect");
         app.email_field.set_text(&email);
         app.password_field.set_focus();
     }

@@ -1,6 +1,5 @@
-use log::{error, info};
+use log::{error, info, warn};
 use winapi::_core::{mem, ptr};
-use winapi::shared::ntdef::NULL;
 use winapi::um::winuser::RegisterHotKey;
 use winapi::um::winuser::{GetMessageW, UnregisterHotKey, WM_HOTKEY};
 
@@ -25,7 +24,7 @@ where
     let mut msg = unsafe { mem::zeroed() };
     loop {
         match unsafe { GetMessageW(&mut msg, ptr::null_mut(), 0, 0) } {
-            0 => error!("Failed to receive message"),
+            0 => warn!("Failed to receive message"),
             _ => {
                 if WM_HOTKEY == msg.message {
                     callback();
