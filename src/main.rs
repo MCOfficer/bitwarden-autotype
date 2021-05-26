@@ -8,7 +8,9 @@ use fern;
 use log::info;
 use log::LevelFilter;
 use win_key_codes::VK_A;
-use winapi::um::winuser::{MOD_ALT, MOD_CONTROL};
+use winapi::um::winuser::{
+    GetForegroundWindow, GetWindowTextLengthW, GetWindowTextW, MOD_ALT, MOD_CONTROL,
+};
 
 fn setup_logger() {
     fern::Dispatch::new()
@@ -36,6 +38,18 @@ fn listen_to_hotkeys() -> Result<()> {
 
 fn handle_hotkey() {
     info!("STUB handle hotkey");
+}
+
+fn active_window() -> String {
+    let handle = unsafe { GetForegroundWindow() }; // First, get the window handle
+    let title_len = unsafe { GetWindowTextLengthW(handle) } + 1; // Get the title length (+1 to be sure)
+
+    let mut buffer: Vec<u16> = Vec::with_capacity(title_len as usize); // Create a buffer that windows can fill
+    let read_len = unsafe { GetWindowTextW(handle, buffer.as_mut_ptr(), title_len) }; // Tell windows to fill the buffer
+
+    // Tell the buffer how much has been read into it, lest it still thinks it's empty, resulting in an empty string
+    unsafe { buffer.set_len(read_len as usize) };
+    String::from_utf16_lossy(buffer.as_slice())
 }
 
 fn main() {
