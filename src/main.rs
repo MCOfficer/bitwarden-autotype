@@ -2,11 +2,12 @@ mod bw_cli;
 mod gui;
 mod hotkeys;
 
+use crate::bw_cli::LoginItem;
 use anyhow::Result;
 use chrono;
 use fern;
-use log::info;
 use log::LevelFilter;
+use log::{error, info};
 use win_key_codes::VK_A;
 use winapi::um::winuser::{
     GetForegroundWindow, GetWindowTextLengthW, GetWindowTextW, MOD_ALT, MOD_CONTROL,
@@ -37,7 +38,22 @@ fn listen_to_hotkeys() -> Result<()> {
 }
 
 fn handle_hotkey() {
-    info!("STUB handle hotkey");
+    let window_title = active_window();
+    match bw_cli::list_logins(&window_title) {
+        Ok(logins) => {
+            // TODO: Let the user choose
+            if let Some(chosen) = logins.get(0) {
+                autotype(chosen);
+            } else {
+                error!("Bitwarden returned no matching logins");
+            }
+        }
+        Err(e) => error!("Failed to get logins: {:?}", e),
+    };
+}
+
+fn autotype(login: &LoginItem) {
+    info!("STUB autotype for {}", login.name);
 }
 
 fn active_window() -> String {

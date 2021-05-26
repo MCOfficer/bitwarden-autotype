@@ -6,6 +6,7 @@ use log::error;
 use log::info;
 use parking_lot::RwLock;
 use serde::Deserialize;
+use serde_repr::*;
 use std::ffi::{OsStr, OsString};
 
 lazy_static! {
@@ -60,7 +61,40 @@ pub fn status() -> Result<Status> {
     Ok(status)
 }
 
-pub fn call_bw<A>(args: Vec<A>) -> Result<String>
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LoginItem {
+    pub id: String,
+    #[serde(rename = "type")]
+    pub item_type: ItemType,
+    pub name: String,
+    pub notes: Option<String>,
+    pub login: Option<Login>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Login {
+    pub username: Option<String>,
+    pub password: Option<String>,
+}
+
+#[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
+#[repr(u8)]
+pub enum ItemType {
+    Login = 1,
+    SecureNote = 2,
+    Card = 3,
+    Identity = 4,
+}
+
+pub fn list_logins(url: &str) -> Result<Vec<LoginItem>> {
+    let stdout = call_bw(vec!["list", "items", "--url", url])?;
+    let logins: Vec<LoginItem> = serde_json::from_str(&stdout)?;
+    Ok(logins)
+}
+
+fn call_bw<A>(args: Vec<A>) -> Result<String>
 where
     A: Into<OsString> + AsRef<OsStr>,
 {
