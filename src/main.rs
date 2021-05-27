@@ -8,6 +8,9 @@ use chrono;
 use fern;
 use log::LevelFilter;
 use log::{error, info};
+use std::collections::HashMap;
+use std::panic::catch_unwind;
+use strfmt::Format;
 use win_key_codes::VK_A;
 use winapi::um::winuser::{
     GetForegroundWindow, GetWindowTextLengthW, GetWindowTextW, MOD_ALT, MOD_CONTROL,
@@ -52,8 +55,52 @@ fn handle_hotkey() {
     };
 }
 
-fn autotype(login: &LoginItem) {
-    info!("STUB autotype for {}", login.name);
+fn autotype(item: &LoginItem) {
+    info!("Autotype for {}", item.name);
+    let interval = std::time::Duration::from_millis(20);
+
+    let mut vars = HashMap::new();
+    vars.insert(
+        "USERNAME".into(),
+        item.login
+            .as_ref()
+            .map(|l| l.username.clone())
+            .flatten()
+            .unwrap_or("".to_string()),
+    );
+    vars.insert(
+        "PASSWORD".into(),
+        item.login
+            .as_ref()
+            .map(|l| l.password.clone())
+            .flatten()
+            .unwrap_or("".to_string()),
+    );
+    vars.insert("TAB".into(), "\t".into());
+    vars.insert("ENTER".into(), "\n".into());
+
+    let pattern = "{USERNAME}{TAB}{PASSWORD}{ENTER}";
+    match pattern.format(&vars) {
+        Ok(to_type) => {
+            for char in to_type.chars() {
+                send_char(char);
+                std::thread::sleep(interval);
+            }
+        }
+        Err(e) => {
+            error!("Formatting error! {:?}", e)
+        }
+    };
+}
+
+fn send_char(c: char) {
+    if let Err(_) = catch_unwind(|| match c {
+        '\t' => winput::send(winput::Vk::Tab),
+        '\n' => winput::send(winput::Vk::Enter),
+        _ => winput::send(c),
+    }) {
+        error!("Failed to send keystroke for character");
+    }
 }
 
 fn active_window() -> String {

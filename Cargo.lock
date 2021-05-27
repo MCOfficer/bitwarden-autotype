@@ -36,8 +36,10 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_repr",
+ "strfmt",
  "win_key_codes",
  "winapi",
+ "winput",
  "winrt-notification",
 ]
 
@@ -126,12 +128,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "18794a8ad5b29321f790b55d93dfba91e125cb1a9edbd4f8e3150acc771c1a5e"
 
 [[package]]
-name = "libm"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7fc7aa29613bd6a620df431842069224d8bc9011086b1db4c0e0cd47fa03ec9a"
-
-[[package]]
 name = "lock_api"
 version = "0.4.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -169,7 +165,6 @@ checksum = "a7b8cfd44e771818ada75ce6cdf1a295306c7e2b6a8d02370e6e8649eaacdaff"
 dependencies = [
  "bitflags",
  "lazy_static",
- "stretch",
  "winapi",
  "winapi-build",
 ]
@@ -347,14 +342,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1fccf17fd09e2455ea796d2ad267b64fa2c5cbd8701b2a93b555d2aa73449f7d"
 
 [[package]]
-name = "stretch"
-version = "0.3.2"
+name = "strfmt"
+version = "0.1.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b0dc6d20ce137f302edf90f9cd3d278866fd7fb139efca6f246161222ad6d87"
-dependencies = [
- "lazy_static",
- "libm",
-]
+checksum = "b278b244ef7aa5852b277f52dd0c6cac3a109919e1f6d699adde63251227a30f"
 
 [[package]]
 name = "strum"
@@ -529,6 +520,15 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "winput"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "18253e2631e9a363251e8ce948b89143367123c8e29edbf608b030f9ca0a36c6"
+dependencies = [
+ "winapi",
 ]
 
 [[package]]
