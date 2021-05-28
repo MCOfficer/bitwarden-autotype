@@ -1,56 +1,33 @@
-extern crate native_windows_derive as nwd;
-extern crate native_windows_gui as nwg;
+use anyhow::Result;
 
-use self::nwg::keys::RETURN;
-use self::nwg::EventData;
-use anyhow::{Context, Result};
-use log::info;
-use nwd::NwgUi;
-use nwg::NativeUi;
+use fltk::app::{set_focus, App};
+use fltk::button::Button;
+use fltk::enums::{Key, Shortcut};
+use fltk::image::PngImage;
+use fltk::input::{Input, SecretInput};
+use fltk::prelude::*;
+use fltk::window::Window;
 
-#[derive(Default, NwgUi)]
-pub struct LoginWindow {
-    #[nwg_control(size: (300, 135), position: (300, 300), title: "Log into Bitwarden", flags: "WINDOW|VISIBLE")]
-    #[nwg_events(OnWindowClose: [LoginWindow::finish])]
-    window: nwg::Window,
+pub fn prompt_login(bitwarden_email: Option<String>) -> Result<(String, String)> {
+    let app = App::default();
+    let mut window = Window::new(100, 100, 400, 150, "Log into Bitwarden");
+    let icon = PngImage::from_data(include_bytes!("../assets/icon.png")).unwrap();
+    window.set_icon(Some(icon));
 
-    #[nwg_control(size: (280, 35), position: (10, 10), focus: true, placeholder_text: Some("E-Mail"), flags: "TAB_STOP|AUTO_SCROLL|VISIBLE")]
-    // Use OnKeyRelease because TextInput prevents OnKeyPress for the Enter key
-    #[nwg_events(OnKeyRelease: [LoginWindow::on_key(SELF, EVT_DATA)])]
-    email_field: nwg::TextInput,
+    let email = Input::new(80, 20, 300, 30, "E-Mail");
+    let password = SecretInput::new(80, 70, 300, 30, "Password");
+    let mut submit = Button::new(160, 110, 80, 30, "Submit");
 
-    #[nwg_control(size: (280, 35), position: (10, 50), placeholder_text: Some("Password"),  password: Some('*'))]
-    #[nwg_events(OnKeyRelease: [LoginWindow::on_key(SELF, EVT_DATA)])]
-    password_field: nwg::TextInput,
+    window.end();
+    window.show();
 
-    #[nwg_control(text: "Login", position: (10, 90), )]
-    #[nwg_events(OnButtonClick: [LoginWindow::finish])]
-    submit_btn: nwg::Button,
-}
-
-impl LoginWindow {
-    fn finish(&self) {
-        self.window.close();
-        nwg::stop_thread_dispatch();
+    if let Some(e) = bitwarden_email {
+        email.set_value(&e);
+        set_focus(&password);
     }
+    submit.set_shortcut(Shortcut::from_key(Key::Enter));
+    submit.set_callback(move |_| app.quit());
 
-    fn on_key(&self, data: &EventData) {
-        if data.on_key() == RETURN {
-            self.finish();
-        };
-    }
-}
-
-pub fn prompt_login(email: Option<String>) -> Result<(String, String)> {
-    nwg::init().context("Failed to initialize NWG")?;
-    let app = LoginWindow::build_ui(Default::default()).context("Failed to build window")?;
-
-    if let Some(email) = email {
-        info!("Using E-Mail known to BitWarden, use 'bw logout' if this is incorrect");
-        app.email_field.set_text(&email);
-        app.password_field.set_focus();
-    }
-
-    nwg::dispatch_thread_events();
-    Ok((app.email_field.text(), app.password_field.text()))
+    app.run().unwrap();
+    Ok((email.value(), password.value()))
 }
