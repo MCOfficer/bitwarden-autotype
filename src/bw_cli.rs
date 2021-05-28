@@ -11,6 +11,7 @@ use std::ffi::{OsStr, OsString};
 
 lazy_static! {
     static ref SESSION_KEY: RwLock<Option<String>> = RwLock::new(None);
+    pub static ref EMAIL: RwLock<Option<String>> = RwLock::new(None);
 }
 
 pub fn login() -> Result<()> {
@@ -32,6 +33,10 @@ pub fn login() -> Result<()> {
 
     let mut guard = SESSION_KEY.write();
     *guard = Some(session);
+    drop(guard);
+
+    let mut guard = EMAIL.write();
+    *guard = Some(email);
     drop(guard);
 
     Ok(())

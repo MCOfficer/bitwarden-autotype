@@ -1,9 +1,9 @@
 mod bw_cli;
 mod gui;
 mod hotkeys;
+mod tray;
 
 use crate::bw_cli::LoginItem;
-use anyhow::Result;
 use chrono;
 use fern;
 use log::LevelFilter;
@@ -34,10 +34,9 @@ fn setup_logger() {
         .unwrap();
 }
 
-fn listen_to_hotkeys() -> Result<()> {
+fn listen_to_hotkeys() {
     hotkeys::register(MOD_ALT | MOD_CONTROL, VK_A);
     hotkeys::listen(|| handle_hotkey());
-    Ok(())
 }
 
 fn handle_hotkey() {
@@ -118,5 +117,7 @@ fn active_window() -> String {
 fn main() {
     setup_logger();
     bw_cli::login().unwrap();
-    listen_to_hotkeys().unwrap();
+    let email = bw_cli::EMAIL.read().clone().unwrap_or("(unknown)".into());
+    std::thread::spawn(|| listen_to_hotkeys());
+    tray::main(email);
 }
