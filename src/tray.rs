@@ -11,7 +11,7 @@ enum Events {
 }
 
 pub fn main(username: String) {
-    let icon_bytes = include_bytes!("../icon.ico");
+    let icon_bytes = include_bytes!("../assets/icon.ico");
     let icon = Icon::from_buffer(icon_bytes, None, None).unwrap();
     let (s, r) = std::sync::mpsc::channel::<Events>();
 
