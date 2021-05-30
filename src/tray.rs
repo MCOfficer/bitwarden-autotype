@@ -8,6 +8,7 @@ use winapi::um::winuser;
 enum Events {
     Exit,
     Dummy,
+    SyncNow,
 }
 
 pub fn main(username: String) {
@@ -26,6 +27,8 @@ pub fn main(username: String) {
                 .item(&format!("Logged in as {}", username), Events::Dummy)
                 .item("Hotkey: Ctrl-Alt-A", Events::Dummy)
                 .separator()
+                .item("Sync Vault", Events::SyncNow)
+                .separator()
                 .item("Exit", Events::Exit),
         )
         .build()
@@ -37,6 +40,7 @@ pub fn main(username: String) {
                 info!("Shutting down");
                 exit(0);
             }
+            Events::SyncNow => crate::bw_cli::sync(),
             e => {
                 println!("{:?}", e);
             }

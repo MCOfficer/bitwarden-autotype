@@ -99,6 +99,13 @@ pub fn list_logins(url: &str) -> Result<Vec<LoginItem>> {
     Ok(logins)
 }
 
+pub fn sync() {
+    info!("Syncing");
+    if let Err(e) = call_bw(vec!["sync"]) {
+        error!("Failed to perform sync: {:?}", e);
+    }
+}
+
 fn call_bw<A>(args: Vec<A>) -> Result<String>
 where
     A: Into<OsString> + AsRef<OsStr>,
