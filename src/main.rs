@@ -40,15 +40,18 @@ fn listen_to_hotkeys() {
 }
 
 fn handle_hotkey() {
+    info!("Received hotkey event");
     let window_title = active_window();
     match bw_cli::list_logins(&window_title) {
         Ok(logins) => {
-            // TODO: Let the user choose
-            if let Some(chosen) = logins.get(0) {
-                autotype(chosen);
-            } else {
-                error!("Bitwarden returned no matching logins");
-            }
+            match logins.len() {
+                0 => error!("Bitwarden returned no matching logins"),
+                1 => autotype(logins.get(0).unwrap()),
+                _ => match gui::login_choice(logins) {
+                    Ok(item) => autotype(&item),
+                    Err(e) => error!("Failed to ask the user to choose a login: {:?}", e),
+                },
+            };
         }
         Err(e) => error!("Failed to get logins: {:?}", e),
     };
