@@ -1,3 +1,5 @@
+#![windows_subsystem = "windows"]
+
 mod bw_cli;
 mod gui;
 mod hotkeys;

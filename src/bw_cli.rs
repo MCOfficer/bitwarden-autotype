@@ -1,6 +1,5 @@
 use anyhow::{bail, Context, Result};
 use chrono::{DateTime, Utc};
-use duct::cmd;
 use lazy_static::lazy_static;
 use log::error;
 use log::info;
@@ -8,6 +7,8 @@ use parking_lot::RwLock;
 use serde::Deserialize;
 use serde_repr::*;
 use std::ffi::{OsStr, OsString};
+use std::os::windows::process::CommandExt;
+use std::process::Command;
 
 lazy_static! {
     static ref SESSION_KEY: RwLock<Option<String>> = RwLock::new(None);
@@ -110,16 +111,15 @@ fn call_bw<A>(args: Vec<A>) -> Result<String>
 where
     A: Into<OsString> + AsRef<OsStr>,
 {
-    let cmd = cmd("bw", &args)
-        .stderr_capture()
-        .stdout_capture()
+    let output = Command::new("bw")
+        .args(&args)
         .env(
             "BW_SESSION",
             SESSION_KEY.read().as_ref().unwrap_or(&"".to_string()), // Passing an empty string will make bitwarden ignore it
         )
-        .unchecked();
-
-    let output = cmd.run().context("Error running command")?;
+        .creation_flags(0x08000000) //CREATE_NO_WINDOW
+        .output()
+        .context("Error running command")?;
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
 
