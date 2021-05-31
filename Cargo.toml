@@ -2,7 +2,12 @@
 name = "bitwarden-autotype"
 version = "0.1.0"
 authors = ["MCOfficer <mcofficer@gmx.de>"]
+license = "MIT"
+homepage = "https://github.com/MCOfficer/bitwarden-autotype"
+repository = "https://github.com/MCOfficer/bitwarden-autotype"
 edition = "2018"
+keywords = ["bitwarden", "autotype", "autofill", "passwords", "utility", "tool"]
+exclude = ["*.xcf"]
 
 [dependencies]
 anyhow = "1.0"
