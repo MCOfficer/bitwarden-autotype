@@ -9,7 +9,7 @@ anyhow = "1.0"
 chrono = { version = "0.4", features = ["serde"] }
 duct = "0.13"
 fern = { version = "0.6", features = ["date-based"], default_features = false }
-fltk = { version = "1.0", features = ["fltk-bundled", "use-ninja"] }
+fltk = { version = "1.0", features = ["fltk-bundled"] }
 lazy_static = "1.4"
 log = "0.4"
 parking_lot = "0.11"
@@ -18,7 +18,6 @@ serde_json = "1.0"
 serde_repr = "0.1"
 strfmt = "0.1"
 trayicon = "0.1.1"
-winapi = "0.3"
+winapi = { version = "0.3", features = ["winuser"], default_features = false }
 win_key_codes = "0.1.2"
 winput = "0.2"
-winrt-notification = "0.3.1"

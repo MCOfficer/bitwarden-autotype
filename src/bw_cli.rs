@@ -17,7 +17,7 @@ lazy_static! {
 pub fn login() -> Result<()> {
     let status = status().context("Failed to get status")?;
 
-    let (email, password) = crate::gui::prompt_login(status.user_email)?;
+    let (email, password) = crate::gui::prompt_bw_login(status.user_email)?;
     if password.trim().len() == 0 {
         bail!("Password with len 0? This can't be right, aborting before 'bw login' stalls")
     }
@@ -66,7 +66,7 @@ pub fn status() -> Result<Status> {
     Ok(status)
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct LoginItem {
     pub id: String,
@@ -77,14 +77,14 @@ pub struct LoginItem {
     pub login: Option<Login>,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Login {
     pub username: Option<String>,
     pub password: Option<String>,
 }
 
-#[derive(Serialize_repr, Deserialize_repr, PartialEq, Debug)]
+#[derive(Clone, Serialize_repr, Deserialize_repr, PartialEq, Debug)]
 #[repr(u8)]
 pub enum ItemType {
     Login = 1,
