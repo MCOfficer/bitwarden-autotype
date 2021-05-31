@@ -7,7 +7,7 @@ description = "The missing desktop-autotype for Bitwarden."
 homepage = "https://github.com/MCOfficer/bitwarden-autotype"
 repository = "https://github.com/MCOfficer/bitwarden-autotype"
 edition = "2018"
-keywords = ["bitwarden", "autotype", "autofill", "passwords", "utility", "tool"]
+keywords = ["bitwarden", "autotype", "autofill", "passwords", "tool"]
 exclude = ["*.xcf"]
 
 [dependencies]
