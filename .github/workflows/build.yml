@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions-rs/toolchain@v1.0.6
         with: 
-          toolchain: "stable-gnu"
+          toolchain: stable-gnu
           profile: minimal
           default: true
       - uses: actions/checkout@v2
