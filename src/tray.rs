@@ -40,7 +40,10 @@ pub fn main(username: String) {
                 info!("Shutting down");
                 exit(0);
             }
-            Events::SyncNow => crate::bw_cli::sync(),
+            Events::SyncNow => {
+                info!("Sync requested");
+                crate::bw_cli::sync()
+            }
             e => {
                 println!("{:?}", e);
             }

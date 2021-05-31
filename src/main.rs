@@ -10,6 +10,7 @@ use log::LevelFilter;
 use log::{error, info};
 use std::collections::HashMap;
 use std::panic::catch_unwind;
+use std::time::Duration;
 use strfmt::Format;
 use win_key_codes::VK_A;
 use winapi::um::winuser::{
@@ -120,7 +121,17 @@ fn active_window() -> String {
 fn main() {
     setup_logger();
     bw_cli::login().unwrap();
-    let email = bw_cli::EMAIL.read().clone().unwrap_or("(unknown)".into());
+
     std::thread::spawn(|| listen_to_hotkeys());
+
+    std::thread::spawn(|| {
+        info!("Starting Syncing thread");
+        loop {
+            std::thread::sleep(Duration::from_secs(60 * 5));
+            bw_cli::sync();
+        }
+    });
+
+    let email = bw_cli::EMAIL.read().clone().unwrap_or("(unknown)".into());
     tray::main(email);
 }
