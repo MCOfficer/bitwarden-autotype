@@ -1,0 +1,32 @@
+name: Build
+on:
+  push:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: hecrj/setup-rust-action@v1
+      - uses: actions/checkout@v2
+      - name: Enable static CRT linkage
+        run: |
+          mkdir .cargo
+          echo '[target.x86_64-pc-windows-msvc]' >> .cargo/config
+          echo 'rustflags = ["-Ctarget-feature=+crt-static"]' >> .cargo/config
+      - name: Build binary
+        run: |
+          cargo build --verbose --release
+          mv target/release/bitwarden-autotype.exe bitwarden-autotype.exe
+      - name: Archive binary
+        uses: actions/upload-artifact@v1
+        with:
+          name: binary-windows
+          path: bitwarden-autotype.exe
+      - name: Release binary
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            bitwarden-autotype.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
