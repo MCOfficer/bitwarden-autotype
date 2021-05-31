@@ -3,6 +3,7 @@ name = "bitwarden-autotype"
 version = "0.1.0"
 authors = ["MCOfficer <mcofficer@gmx.de>"]
 license = "MIT"
+description = "The missing desktop-autotype for Bitwarden."
 homepage = "https://github.com/MCOfficer/bitwarden-autotype"
 repository = "https://github.com/MCOfficer/bitwarden-autotype"
 edition = "2018"
