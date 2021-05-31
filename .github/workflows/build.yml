@@ -6,9 +6,11 @@ jobs:
   windows:
     runs-on: windows-latest
     steps:
-      - uses: hecrj/setup-rust-action@v1
-        with:
-          targets: x86_64-pc-windows-gnu
+      - uses: actions-rs/toolchain@v1.0.6
+        with: 
+          profile: minimal
+          target: "x86_64-pc-windows-gnu"
+          default: true
       - uses: actions/checkout@v2
       - name: Enable static CRT linkage
         run: |
