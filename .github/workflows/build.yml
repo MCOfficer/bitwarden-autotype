@@ -24,7 +24,7 @@ jobs:
       - name: Build binary
         run: |
           cargo build --verbose --release
-          mv target/release/bitwarden-autotype.exe bitwarden-autotype.exe
+          cp target/release/bitwarden-autotype.exe bitwarden-autotype.exe
       - name: Create installer
         run: iscc bitwarden-autotype.iss
       - name: Generate checksums
