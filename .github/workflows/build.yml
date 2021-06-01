@@ -2,6 +2,10 @@ name: Build
 on:
   push:
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   windows:
     runs-on: windows-latest
@@ -21,16 +25,23 @@ jobs:
         run: |
           cargo build --verbose --release
           mv target/release/bitwarden-autotype.exe bitwarden-autotype.exe
+      - name: Create installer
+        run: iscc bitwarden-autotype.iss
+      - name: Generate checksums
+        run: sha256sums bitwarden-autotype*.exe > sha256sums.txt
       - name: Archive binary
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
-          name: binary-windows
-          path: bitwarden-autotype.exe
+          name: windows
+          path: |
+            bitwarden-autotype*.exe
+            sha256sums.txt
       - name: Release binary
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            bitwarden-autotype.exe
+            bitwarden-autotype*.exe
+            sha256sums.txt
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
