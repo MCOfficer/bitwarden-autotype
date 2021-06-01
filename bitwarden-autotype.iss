@@ -17,10 +17,11 @@ DefaultDirName={userpf}\{#AppName}
 DefaultGroupName={#AppName}
 LicenseFile=.\LICENSE
 OutputDir=.
-OutputBaseFilename={#AppName}-{#AppVersion}
+OutputBaseFilename={#AppName}-{#AppVersion}-setup
 Compression=lzma
 SolidCompression=yes
 DisableProgramGroupPage=yes
+PrivilegesRequired=lowest
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
