@@ -28,20 +28,20 @@ jobs:
       - name: Create installer
         run: iscc bitwarden-autotype.iss
       - name: Generate checksums
-        run: sha256sums bitwarden-autotype*.exe > sha256sums.txt
+        run: |
+          for f in bitwarden-autotype*.exe; do
+            powershell -c "Get-FileHash $f | Select-Object -ExpandProperty Hash" > $f.sha256
+          done
       - name: Archive binary
         uses: actions/upload-artifact@v2
         with:
           name: windows
           path: |
-            bitwarden-autotype*.exe
-            sha256sums.txt
+            bitwarden-autotype*.exe*
       - name: Release binary
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            bitwarden-autotype*.exe
-            sha256sums.txt
+          files: bitwarden-autotype*.exe*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
