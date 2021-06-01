@@ -7,6 +7,7 @@ use parking_lot::RwLock;
 use serde::Deserialize;
 use serde_repr::*;
 use std::ffi::{OsStr, OsString};
+use std::fmt::{Display, Formatter};
 use std::os::windows::process::CommandExt;
 use std::process::Command;
 
@@ -18,29 +19,46 @@ lazy_static! {
 pub fn login() -> Result<()> {
     let status = status().context("Failed to get status")?;
 
-    let (email, password) = crate::gui::prompt_bw_login(status.user_email)?;
-    if password.trim().len() == 0 {
-        bail!("Password with len 0? This can't be right, aborting before 'bw login' stalls")
+    loop {
+        let (email, password) = crate::gui::prompt_bw_login(status.user_email.clone())?;
+        if password.trim().len() == 0 {
+            bail!("Password with len 0? This can't be right, aborting before 'bw login' stalls")
+        }
+
+        let output = if VaultStatus::UNAUTHENTICATED == status.vault_status {
+            info!("Logging in...");
+            call_bw(vec!["login", "--raw", email.trim(), &password])
+        } else {
+            info!("Already logged in, unlocking vault...");
+            call_bw(vec!["unlock", "--raw", &password])
+        };
+
+        match output {
+            Err(e) => {
+                match e {
+                    CliError::InvalidPassword => {} // loop and ask again
+                    CliError::FailedToRun(io) => {
+                        bail!("Calling bw failed: {:#?}", io)
+                    }
+                    CliError::Status(status) => {
+                        bail!("Calling bw failed with status: {:#?}", status)
+                    }
+                }
+            }
+            Ok(key) => {
+                let mut guard = SESSION_KEY.write();
+                *guard = Some(key);
+                drop(guard);
+
+                let mut guard = EMAIL.write();
+                *guard = Some(email);
+                drop(guard);
+
+                return Ok(());
+            }
+        }
+        info!("Acquired session key");
     }
-
-    let session = if VaultStatus::UNAUTHENTICATED == status.vault_status {
-        info!("Logging in...");
-        call_bw(vec!["login", "--raw", email.trim(), &password])?
-    } else {
-        info!("Already logged in, unlocking vault...");
-        call_bw(vec!["unlock", "--raw", &password])?
-    };
-    info!("Acquired session key");
-
-    let mut guard = SESSION_KEY.write();
-    *guard = Some(session);
-    drop(guard);
-
-    let mut guard = EMAIL.write();
-    *guard = Some(email);
-    drop(guard);
-
-    Ok(())
 }
 #[derive(Debug, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
@@ -107,7 +125,22 @@ pub fn sync() {
     }
 }
 
-fn call_bw<A>(args: Vec<A>) -> Result<String>
+#[derive(Debug)]
+enum CliError {
+    InvalidPassword,
+    Status(std::process::ExitStatus),
+    FailedToRun(std::io::Error),
+}
+
+impl Display for CliError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
+impl std::error::Error for CliError {}
+
+fn call_bw<A>(args: Vec<A>) -> std::result::Result<String, CliError>
 where
     A: Into<OsString> + AsRef<OsStr>,
 {
@@ -119,11 +152,15 @@ where
         )
         .creation_flags(0x08000000) //CREATE_NO_WINDOW
         .output()
-        .context("Error running command")?;
+        .map_err(|e| CliError::FailedToRun(e))?;
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
 
     if !output.status.success() {
+        if stderr.contains("Invalid master password") {
+            return Err(CliError::InvalidPassword);
+        }
+
         let subcmd: OsString = args.get(0).unwrap().into();
         let status_code = output
             .status
@@ -137,7 +174,7 @@ where
         error!("STDERR WAS:\n{}", stderr);
         error!("STDOUT WAS:\n{}", stdout);
 
-        return Err(anyhow::format_err!("Error calling bitwarden cli"));
+        return Err(CliError::Status(output.status));
     }
 
     Ok(stdout.into())
