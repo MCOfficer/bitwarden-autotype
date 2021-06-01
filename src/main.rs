@@ -6,8 +6,7 @@ mod hotkeys;
 mod tray;
 
 use crate::bw_cli::LoginItem;
-use chrono;
-use fern;
+
 use log::LevelFilter;
 use log::{error, info};
 use std::collections::HashMap;
@@ -39,7 +38,7 @@ fn setup_logger() {
 
 fn listen_to_hotkeys() {
     hotkeys::register(MOD_ALT | MOD_CONTROL, VK_A);
-    hotkeys::listen(|| handle_hotkey());
+    hotkeys::listen(handle_hotkey);
 }
 
 fn handle_hotkey() {
@@ -71,7 +70,7 @@ fn autotype(item: &LoginItem) {
             .as_ref()
             .map(|l| l.username.clone())
             .flatten()
-            .unwrap_or("".to_string()),
+            .unwrap_or_else(|| "".to_string()),
     );
     vars.insert(
         "PASSWORD".into(),
@@ -79,7 +78,7 @@ fn autotype(item: &LoginItem) {
             .as_ref()
             .map(|l| l.password.clone())
             .flatten()
-            .unwrap_or("".to_string()),
+            .unwrap_or_else(|| "".to_string()),
     );
     vars.insert("TAB".into(), "\t".into());
     vars.insert("ENTER".into(), "\n".into());
@@ -99,11 +98,13 @@ fn autotype(item: &LoginItem) {
 }
 
 fn send_char(c: char) {
-    if let Err(_) = catch_unwind(|| match c {
+    if catch_unwind(|| match c {
         '\t' => winput::send(winput::Vk::Tab),
         '\n' => winput::send(winput::Vk::Enter),
         _ => winput::send(c),
-    }) {
+    })
+    .is_err()
+    {
         error!("Failed to send keystroke for character");
     }
 }
@@ -124,7 +125,7 @@ fn main() {
     setup_logger();
     bw_cli::login().unwrap();
 
-    std::thread::spawn(|| listen_to_hotkeys());
+    std::thread::spawn(listen_to_hotkeys);
 
     std::thread::spawn(|| {
         info!("Starting Syncing thread");
@@ -134,6 +135,9 @@ fn main() {
         }
     });
 
-    let email = bw_cli::EMAIL.read().clone().unwrap_or("(unknown)".into());
+    let email = bw_cli::EMAIL
+        .read()
+        .clone()
+        .unwrap_or_else(|| "(unknown)".into());
     tray::main(email);
 }

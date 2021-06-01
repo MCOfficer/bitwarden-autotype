@@ -21,11 +21,11 @@ pub fn login() -> Result<()> {
 
     loop {
         let (email, password) = crate::gui::prompt_bw_login(status.user_email.clone())?;
-        if password.trim().len() == 0 {
+        if password.trim().is_empty() {
             bail!("Password with len 0? This can't be right, aborting before 'bw login' stalls")
         }
 
-        let output = if VaultStatus::UNAUTHENTICATED == status.vault_status {
+        let output = if VaultStatus::Unauthenticated == status.vault_status {
             info!("Logging in...");
             call_bw(vec!["login", "--raw", email.trim(), &password])
         } else {
@@ -63,9 +63,9 @@ pub fn login() -> Result<()> {
 #[derive(Debug, Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
 enum VaultStatus {
-    UNLOCKED,
-    LOCKED,
-    UNAUTHENTICATED,
+    Unlocked,
+    Locked,
+    Unauthenticated,
 }
 
 #[derive(Debug, Deserialize)]
@@ -152,7 +152,7 @@ where
         )
         .creation_flags(0x08000000) //CREATE_NO_WINDOW
         .output()
-        .map_err(|e| CliError::FailedToRun(e))?;
+        .map_err(CliError::FailedToRun)?;
     let stdout = String::from_utf8_lossy(&output.stdout);
     let stderr = String::from_utf8_lossy(&output.stderr);
 

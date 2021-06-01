@@ -19,7 +19,7 @@ fn unregister() {
 
 pub fn listen<C>(mut callback: C)
 where
-    C: FnMut() -> (),
+    C: FnMut(),
 {
     let mut msg = unsafe { mem::zeroed() };
     loop {

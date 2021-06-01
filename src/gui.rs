@@ -60,8 +60,8 @@ pub fn login_choice(items: Vec<LoginItem>) -> Result<LoginItem> {
     window.show();
 
     let closure_items = items.clone();
-    table.draw_cell(move |t, ctx, row, col, x, y, w, h| match ctx {
-        TableContext::Cell => {
+    table.draw_cell(move |t, ctx, row, col, x, y, w, h| {
+        if ctx == TableContext::Cell {
             let item: &LoginItem = closure_items.get(row as usize).unwrap();
             let data = match col {
                 0 => item.name.clone(),
@@ -70,12 +70,11 @@ pub fn login_choice(items: Vec<LoginItem>) -> Result<LoginItem> {
                     .clone()
                     .map(|l| l.username)
                     .flatten()
-                    .unwrap_or("".into()),
+                    .unwrap_or_else(|| "".into()),
                 _ => "".into(),
             };
             draw_data(&data, x, y, w, h, t.is_selected(row, col))
         }
-        _ => (),
     });
 
     submit.set_shortcut(Shortcut::from_key(Key::Enter));
