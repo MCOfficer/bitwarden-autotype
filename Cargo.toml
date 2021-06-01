@@ -9,6 +9,7 @@ repository = "https://github.com/MCOfficer/bitwarden-autotype"
 edition = "2018"
 keywords = ["bitwarden", "autotype", "autofill", "passwords", "tool"]
 exclude = ["*.xcf"]
+build = "build.rs"
 
 [dependencies]
 anyhow = "1.0"
@@ -26,3 +27,6 @@ trayicon = "0.1.1"
 winapi = { version = "0.3", features = ["winuser"], default_features = false }
 win_key_codes = "0.1.2"
 winput = "0.2"
+
+[build-dependencies]
+winres = "0.1"
