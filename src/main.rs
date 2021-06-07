@@ -4,9 +4,12 @@ mod bw_cli;
 mod gui;
 mod hotkeys;
 mod tray;
+mod typing;
 
 use crate::bw_cli::LoginItem;
 
+use crate::typing::{send_char_stream, CMD_END, CMD_START, SLEEP_CMD};
+use argh::FromArgs;
 use log::LevelFilter;
 use log::{error, info};
 use std::collections::HashMap;
@@ -61,7 +64,6 @@ fn handle_hotkey() {
 
 fn autotype(item: &LoginItem) {
     info!("Autotype for {}", item.name);
-    let interval = std::time::Duration::from_millis(20);
 
     let mut vars = HashMap::new();
     vars.insert(
@@ -85,30 +87,12 @@ fn autotype(item: &LoginItem) {
 
     let pattern = "{USERNAME}{TAB}{PASSWORD}{ENTER}";
     match pattern.format(&vars) {
-        Ok(to_type) => {
-            for char in to_type.chars() {
-                send_char(char);
-                std::thread::sleep(interval);
-            }
-        }
+        Ok(to_type) => send_char_stream(to_type.chars()),
         Err(e) => {
             error!("Formatting error! {:?}", e)
         }
     };
 }
-
-fn send_char(c: char) {
-    if catch_unwind(|| match c {
-        '\t' => winput::send(winput::Vk::Tab),
-        '\n' => winput::send(winput::Vk::Enter),
-        _ => winput::send(c),
-    })
-    .is_err()
-    {
-        error!("Failed to send keystroke for character");
-    }
-}
-
 fn active_window() -> String {
     let handle = unsafe { GetForegroundWindow() }; // First, get the window handle
     let title_len = unsafe { GetWindowTextLengthW(handle) } + 1; // Get the title length (+1 to be sure)
