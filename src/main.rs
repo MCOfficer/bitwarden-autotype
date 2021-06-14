@@ -108,8 +108,8 @@ fn main() {
     std::thread::spawn(|| {
         info!("Starting Syncing thread");
         loop {
-            std::thread::sleep(Duration::from_secs(60 * 5));
             bw_cli::sync();
+            std::thread::sleep(Duration::from_secs(60 * 5));
         }
     });
 
