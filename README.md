@@ -49,6 +49,7 @@ You can specify any pattern you want. Supported are:
 - `{TAB}` to simulate the tab key
 - `{USERNAME}` to type your login's username field
 - `{PASSWORD}` to type your login's password field
+- `{SLEEP=X}` to pause typing for X milliseconds
 
 ## Caveats
 
