@@ -13,18 +13,19 @@ build = "build.rs"
 
 [dependencies]
 anyhow = "1.0"
+argh = "0.1"
 chrono = { version = "0.4", features = ["serde"] }
 fern = { version = "0.6", features = ["date-based"], default_features = false }
 fltk = { version = "1.0", features = ["fltk-bundled"] }
 lazy_static = "1.4"
 log = "0.4"
 parking_lot = "0.11"
+regex = "1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 serde_repr = "0.1"
 strfmt = "0.1"
 trayicon = "0.1.1"
-utf8-chars = "1.0"
 winapi = { version = "0.3", features = ["winuser"], default_features = false }
 win_key_codes = "0.1.2"
 winput = "0.2"

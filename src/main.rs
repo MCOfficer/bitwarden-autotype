@@ -8,14 +8,13 @@ mod typing;
 
 use crate::bw_cli::LoginItem;
 
-use crate::typing::{send_char_stream, CMD_END, CMD_START, SLEEP_CMD};
+use crate::typing::send_raw_string;
 use argh::FromArgs;
 use log::LevelFilter;
 use log::{error, info};
 use std::collections::HashMap;
 use std::panic::catch_unwind;
 use std::time::Duration;
-use strfmt::Format;
 use win_key_codes::VK_A;
 use winapi::um::winuser::{
     GetForegroundWindow, GetWindowTextLengthW, GetWindowTextW, MOD_ALT, MOD_CONTROL,
@@ -65,34 +64,29 @@ fn handle_hotkey() {
 fn autotype(item: &LoginItem) {
     info!("Autotype for {}", item.name);
 
-    let mut vars = HashMap::new();
-    vars.insert(
-        "USERNAME".into(),
-        item.login
+    let mut pattern = "{USERNAME}{TAB}{PASSWORD}{ENTER}".to_string();
+
+    pattern = pattern.replace(
+        "{USERNAME}",
+        &item
+            .login
             .as_ref()
             .map(|l| l.username.clone())
             .flatten()
             .unwrap_or_else(|| "".to_string()),
     );
-    vars.insert(
-        "PASSWORD".into(),
-        item.login
+    pattern = pattern.replace(
+        "{PASSWORD}",
+        &item
+            .login
             .as_ref()
             .map(|l| l.password.clone())
             .flatten()
             .unwrap_or_else(|| "".to_string()),
     );
-    vars.insert("TAB".into(), "\t".into());
-    vars.insert("ENTER".into(), "\n".into());
-
-    let pattern = "{USERNAME}{TAB}{PASSWORD}{ENTER}";
-    match pattern.format(&vars) {
-        Ok(to_type) => send_char_stream(to_type.chars()),
-        Err(e) => {
-            error!("Formatting error! {:?}", e)
-        }
-    };
+    send_raw_string(pattern);
 }
+
 fn active_window() -> String {
     let handle = unsafe { GetForegroundWindow() }; // First, get the window handle
     let title_len = unsafe { GetWindowTextLengthW(handle) } + 1; // Get the title length (+1 to be sure)
@@ -124,4 +118,14 @@ fn main() {
         .clone()
         .unwrap_or_else(|| "(unknown)".into());
     tray::main(email);
+}
+
+fn run_as_server() {
+    for res in stdin().lock().lines() {
+        match res {
+            Ok(line) => typing::handle_cmd_str(line),
+            Err(e) => error!("Failed to read line from stdin: {}", e),
+        }
+    }
+    exit(0);
 }
