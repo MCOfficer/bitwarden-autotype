@@ -96,6 +96,14 @@ pub struct LoginItem {
     pub login: Option<Login>,
 }
 
+impl LoginItem {
+    pub fn autotype_pattern(&self) -> Option<String> {
+        let indicator = "Autotype: ";
+        let mut lines = self.notes.as_ref()?.lines();
+        lines.find_map(|l| l.strip_prefix(indicator).map(|s| s.to_string()))
+    }
+}
+
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Login {

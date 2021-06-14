@@ -14,7 +14,7 @@ Autotype/Autofill support has been a requested feature in Bitwarden [for years](
 - [x] Match window titles against Bitwarden Login URLs
 - [x] Choose between multiple matching Logins
 - [x] Autotype following the `{USERNAME}{TAB}{PASSWORD}{ENTER}` Pattern
-- [ ] Custom Autotype Patterns (see [#1](https://github.com/MCOfficer/bitwarden-autotype/issues/1))
+- [x] Custom Autotype Patterns (see [#1](https://github.com/MCOfficer/bitwarden-autotype/issues/1))
 - [ ] Autotype in windows with elevated permissions (see [#5](https://github.com/MCOfficer/bitwarden-autotype/issues/5))
 - [x] Ability to sync your Vault automatically and manually
 - [ ] Pretty UI
@@ -34,6 +34,21 @@ Autotype/Autofill support has been a requested feature in Bitwarden [for years](
 - Log into Bitwarden
 - In the window you set up the URL for, hit the Autotype hotkey
 - Feel the magic flow through you
+
+### Custom Autotype Patterns
+
+If you want to define your own patterns, you can do so in your Login's Notes. Suppose you wanted to only type the password and hit enter, you'd add this line to your Login's Notes:
+````
+Autotype: {PASSWORD}{ENTER}
+````
+<sup>(Note: the space after `Autotype:` is required)</sup>
+
+You can specify any pattern you want. Supported are:
+- Any Character (some exotic unicode chars may lead to breakage, please report any bugs) except newlines (use `{ENTER}`)
+- `{ENTER}` to simulate the enter/return key
+- `{TAB}` to simulate the tab key
+- `{USERNAME}` to type your login's username field
+- `{PASSWORD}` to type your login's password field
 
 ## Caveats
 

@@ -20,6 +20,8 @@ use winapi::um::winuser::{
     GetForegroundWindow, GetWindowTextLengthW, GetWindowTextW, MOD_ALT, MOD_CONTROL,
 };
 
+static DEFAULT_PATTERN: &str = "{USERNAME}{TAB}{PASSWORD}{ENTER}";
+
 fn setup_logger() {
     fern::Dispatch::new()
         .level(LevelFilter::Debug)
@@ -64,7 +66,9 @@ fn handle_hotkey() {
 fn autotype(item: &LoginItem) {
     info!("Autotype for {}", item.name);
 
-    let mut pattern = "{USERNAME}{TAB}{PASSWORD}{ENTER}".to_string();
+    let mut pattern = item
+        .autotype_pattern()
+        .unwrap_or(DEFAULT_PATTERN.to_string());
 
     pattern = pattern.replace(
         "{USERNAME}",

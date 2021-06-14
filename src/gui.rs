@@ -44,13 +44,14 @@ pub fn prompt_bw_login(bitwarden_email: Option<String>) -> Result<(String, Strin
 
 pub fn login_choice(items: Vec<LoginItem>) -> Result<LoginItem> {
     let app = App::default();
-    let mut window = Window::new(100, 100, 400, 150, "Choose a Login");
+    let mut window = Window::new(100, 100, 800, 150, "Choose a Login");
     window.set_icon(Some(ICON.clone()));
 
-    let mut table = Table::new(20, 10, 400 - 40, 150 - 20 - 50, "");
+    let mut table = Table::new(20, 10, window.width() - 40, window.height() - 20, "");
     table.set_rows(items.len() as i32);
-    table.set_cols(2);
-    table.set_col_width_all(table.width() / 2 - 1);
+    table.set_cols(3);
+    table.set_col_width_all(table.width() / (table.cols() + 1) - 1);
+    table.set_col_width(2, table.col_width(2) * 2); // Give the autotype patterns space
     table.set_selection(0, 0, 0, 0);
     table.end();
 
@@ -71,6 +72,9 @@ pub fn login_choice(items: Vec<LoginItem>) -> Result<LoginItem> {
                     .map(|l| l.username)
                     .flatten()
                     .unwrap_or_else(|| "".into()),
+                2 => item
+                    .autotype_pattern()
+                    .unwrap_or(crate::DEFAULT_PATTERN.to_string()),
                 _ => "".into(),
             };
             draw_data(&data, x, y, w, h, t.is_selected(row, col))
