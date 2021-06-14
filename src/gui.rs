@@ -18,12 +18,12 @@ lazy_static! {
 
 pub fn prompt_bw_login(bitwarden_email: Option<String>) -> Result<(String, String)> {
     let app = App::default();
-    let mut window = Window::new(100, 100, 400, 150, "Log into Bitwarden");
+    let mut window = Window::new(100, 100, 400, 120, "Log into Bitwarden");
     window.set_icon(Some(ICON.clone()));
 
     let email = Input::new(80, 20, 300, 30, "E-Mail");
     let password = SecretInput::new(80, 70, 300, 30, "Password");
-    let mut submit = Button::new(160, 110, 80, 30, "Submit");
+    let mut submit = Button::new(0, 0, 0, 0, "");
 
     window.end();
     window.show();
@@ -54,7 +54,7 @@ pub fn login_choice(items: Vec<LoginItem>) -> Result<LoginItem> {
     table.set_selection(0, 0, 0, 0);
     table.end();
 
-    let mut submit = Button::new(160, 110, 80, 30, "Shoot!");
+    let mut submit = Button::new(0, 0, 0, 0, "");
 
     window.end();
     window.show();
