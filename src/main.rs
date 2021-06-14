@@ -103,8 +103,23 @@ fn active_window() -> String {
     String::from_utf16_lossy(buffer.as_slice())
 }
 
+#[derive(FromArgs)]
+/// Yes, this thing has a CLI.
+struct BitwardenAutotype {
+    /// run in autotype-server mode. Since this autotypes anything it receives on stdin,
+    /// calling this from a terminal yourself results in a very nice example of an infinite feedback loop.
+    #[argh(switch)]
+    server: bool,
+}
+
 fn main() {
+    let opts: BitwardenAutotype = argh::from_env();
     setup_logger();
+
+    if opts.server {
+        run_as_server();
+    }
+
     bw_cli::login().unwrap();
 
     std::thread::spawn(listen_to_hotkeys);
@@ -127,7 +142,7 @@ fn main() {
 fn run_as_server() {
     for res in stdin().lock().lines() {
         match res {
-            Ok(line) => typing::handle_cmd_str(line),
+            Ok(line) => typing::send_serialized_cmd(line),
             Err(e) => error!("Failed to read line from stdin: {}", e),
         }
     }
