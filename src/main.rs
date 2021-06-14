@@ -12,8 +12,8 @@ use crate::typing::send_raw_string;
 use argh::FromArgs;
 use log::LevelFilter;
 use log::{error, info};
-use std::collections::HashMap;
-use std::panic::catch_unwind;
+use std::io::{stdin, BufRead};
+use std::process::exit;
 use std::time::Duration;
 use win_key_codes::VK_A;
 use winapi::um::winuser::{

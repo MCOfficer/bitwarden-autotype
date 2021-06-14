@@ -76,7 +76,7 @@ pub enum Command {
     Void,       // Does nothing
 }
 
-pub fn handle_cmd_str(cmd: String) {
+pub fn send_serialized_cmd(cmd: String) {
     match serde_json::from_str(&cmd) {
         Ok(cmd) => handle_cmd(cmd),
         Err(e) => error!("Failed to deserialize command: {}, {}", cmd, e),
