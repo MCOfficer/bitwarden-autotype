@@ -77,7 +77,7 @@ fn autotype(item: &LoginItem) {
 
     let mut pattern = item
         .autotype_pattern()
-        .unwrap_or(DEFAULT_PATTERN.to_string());
+        .unwrap_or_else(|| DEFAULT_PATTERN.to_string());
 
     pattern = pattern.replace(
         "{USERNAME}",

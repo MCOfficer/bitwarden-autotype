@@ -74,7 +74,7 @@ pub fn login_choice(items: Vec<LoginItem>) -> Result<LoginItem> {
                     .unwrap_or_else(|| "".into()),
                 2 => item
                     .autotype_pattern()
-                    .unwrap_or(crate::DEFAULT_PATTERN.to_string()),
+                    .unwrap_or_else(|| crate::DEFAULT_PATTERN.to_string()),
                 _ => "".into(),
             };
             draw_data(&data, x, y, w, h, t.is_selected(row, col))
