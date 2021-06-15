@@ -1,3 +1,4 @@
+use crate::ActiveWindowInfo;
 use anyhow::{bail, Context, Result};
 use chrono::{DateTime, Utc};
 use lazy_static::lazy_static;
@@ -120,9 +121,13 @@ pub enum ItemType {
     Identity = 4,
 }
 
-pub fn list_logins(url: &str) -> Result<Vec<LoginItem>> {
-    let stdout = call_bw(vec!["list", "items", "--url", url])?;
-    let logins: Vec<LoginItem> = serde_json::from_str(&stdout)?;
+pub fn list_logins(info: ActiveWindowInfo) -> Result<Vec<LoginItem>> {
+    let stdout = call_bw(vec!["list", "items", "--url", &info.title])?;
+    let mut logins: Vec<LoginItem> = serde_json::from_str(&stdout)?;
+
+    let stdout = call_bw(vec!["list", "items", "--url", &info.executable])?;
+    let executable_logins: Vec<LoginItem> = serde_json::from_str(&stdout)?;
+    logins.extend(executable_logins);
     Ok(logins)
 }
 

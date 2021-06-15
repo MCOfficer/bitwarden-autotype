@@ -11,7 +11,7 @@ Autotype/Autofill support has been a requested feature in Bitwarden [for years](
 - [x] Log into your Bitwarden Vault
 - [x] Use a global hotkey (Ctrl-Alt-A) to trigger autotyping
 - [ ] Configurable hotkey
-- [x] Match window titles against Bitwarden Login URLs
+- [x] Match window titles or executable names against Bitwarden Login URLs
 - [x] Choose between multiple matching Logins
 - [x] Autotype following the `{USERNAME}{TAB}{PASSWORD}{ENTER}` Pattern
 - [x] Custom Autotype Patterns (see [#1](https://github.com/MCOfficer/bitwarden-autotype/issues/1))

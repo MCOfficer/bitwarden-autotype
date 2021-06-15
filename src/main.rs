@@ -12,12 +12,21 @@ use crate::typing::send_raw_string;
 use argh::FromArgs;
 use log::LevelFilter;
 use log::{error, info};
+use std::ffi::OsString;
 use std::io::{stdin, BufRead};
+use std::os::windows::ffi::OsStringExt;
+use std::path::PathBuf;
 use std::process::exit;
 use std::time::Duration;
 use win_key_codes::VK_A;
+use winapi::shared::minwindef::DWORD;
+use winapi::shared::ntdef::FALSE;
+use winapi::um::processthreadsapi::OpenProcess;
+use winapi::um::psapi::GetProcessImageFileNameW;
+use winapi::um::winnt::PROCESS_QUERY_LIMITED_INFORMATION;
 use winapi::um::winuser::{
-    GetForegroundWindow, GetWindowTextLengthW, GetWindowTextW, MOD_ALT, MOD_CONTROL,
+    GetForegroundWindow, GetWindowTextLengthW, GetWindowTextW, GetWindowThreadProcessId, MOD_ALT,
+    MOD_CONTROL,
 };
 
 static DEFAULT_PATTERN: &str = "{USERNAME}{TAB}{PASSWORD}{ENTER}";
@@ -47,8 +56,8 @@ fn listen_to_hotkeys() {
 
 fn handle_hotkey() {
     info!("Received hotkey event");
-    let window_title = active_window();
-    match bw_cli::list_logins(&window_title) {
+    let window_info = ActiveWindowInfo::new();
+    match bw_cli::list_logins(window_info) {
         Ok(logins) => {
             match logins.len() {
                 0 => error!("Bitwarden returned no matching logins"),
@@ -91,16 +100,42 @@ fn autotype(item: &LoginItem) {
     send_raw_string(pattern);
 }
 
-fn active_window() -> String {
-    let handle = unsafe { GetForegroundWindow() }; // First, get the window handle
-    let title_len = unsafe { GetWindowTextLengthW(handle) } + 1; // Get the title length (+1 to be sure)
+pub struct ActiveWindowInfo {
+    title: String,
+    executable: String,
+}
 
-    let mut buffer: Vec<u16> = Vec::with_capacity(title_len as usize); // Create a buffer that windows can fill
-    let read_len = unsafe { GetWindowTextW(handle, buffer.as_mut_ptr(), title_len) }; // Tell windows to fill the buffer
+impl ActiveWindowInfo {
+    fn new() -> Self {
+        let window_handle = unsafe { GetForegroundWindow() }; // First, get the window handle
+        let title_len = unsafe { GetWindowTextLengthW(window_handle) } + 1; // Get the title length (+1 to be sure)
 
-    // Tell the buffer how much has been read into it, lest it still thinks it's empty, resulting in an empty string
-    unsafe { buffer.set_len(read_len as usize) };
-    String::from_utf16_lossy(buffer.as_slice())
+        let mut buffer: Vec<u16> = Vec::with_capacity(title_len as usize); // Create a buffer that windows can fill
+        let read_len = unsafe { GetWindowTextW(window_handle, buffer.as_mut_ptr(), title_len) }; // Tell windows to fill the buffer
+
+        // Tell the buffer how much has been read into it, lest it still thinks it's empty, resulting in an empty string
+        unsafe { buffer.set_len(read_len as usize) };
+        let title = String::from_utf16_lossy(buffer.as_slice());
+
+        let mut pid = 0;
+        unsafe { GetWindowThreadProcessId(window_handle, &mut pid) }; // Get the process id
+        let psapi_handle =
+            unsafe { OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE as i32, pid) }; // Get a PSAPI handle, limited information permission is sufficient
+
+        let mut buffer = [0; 1024]; // Same as above, except we have to guess the capacity, and we have to use a slice for... reasons?
+        let read_len = unsafe {
+            GetProcessImageFileNameW(psapi_handle, buffer.as_mut_ptr(), buffer.len() as DWORD)
+        };
+        let executable_path: PathBuf = OsString::from_wide(&buffer[..read_len as usize]).into();
+
+        let executable = executable_path
+            .file_name()
+            .unwrap()
+            .to_string_lossy()
+            .to_string();
+
+        Self { title, executable }
+    }
 }
 
 #[derive(FromArgs)]
