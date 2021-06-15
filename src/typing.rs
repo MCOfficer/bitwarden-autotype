@@ -85,8 +85,8 @@ pub fn send_serialized_cmd(cmd: String) {
 
 pub fn handle_cmd(cmd: Command) {
     match cmd {
-        Command::Tab => send_char(Vk::Tab.into_u8().into()),
-        Command::Enter => send_char(Vk::Enter.into_u8().into()),
+        Command::Tab => send_char('\t'),
+        Command::Enter => send_char('\n'),
         Command::Char(c) => send_char(c),
         Command::Sleep(millis) => std::thread::sleep(Duration::from_millis(millis)),
         Command::Void => {}
@@ -95,8 +95,8 @@ pub fn handle_cmd(cmd: Command) {
 
 fn send_char(c: char) {
     if catch_unwind(|| match c {
-        '\t' => send(winput::Vk::Tab),
-        '\n' => send(winput::Vk::Enter),
+        '\t' => send(Vk::Tab),
+        '\n' => send(Vk::Enter),
         _ => send(c),
     })
     .is_err()
