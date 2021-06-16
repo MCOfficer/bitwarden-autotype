@@ -97,6 +97,17 @@ fn autotype(item: &LoginItem) {
             .flatten()
             .unwrap_or_else(|| "".to_string()),
     );
+
+    if pattern.contains("{TOTP}") {
+        // Check first, because getting the code is expensive
+        match item.totp() {
+            Ok(totp) => pattern = pattern.replace("{TOTP}", &totp),
+            Err(e) => {
+                error!("Failed to get TOTP! {}", e);
+                return;
+            }
+        }
+    }
     send_raw_string(pattern);
 }
 

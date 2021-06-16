@@ -103,6 +103,10 @@ impl LoginItem {
         let mut lines = self.notes.as_ref()?.lines();
         lines.find_map(|l| l.strip_prefix(indicator).map(|s| s.to_string()))
     }
+
+    pub fn totp(&self) -> Result<String> {
+        Ok(call_bw(vec!["get", "totp", &self.id])?)
+    }
 }
 
 #[derive(Clone, Debug, Deserialize)]
