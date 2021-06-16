@@ -1,6 +1,6 @@
 [package]
 name = "bitwarden-autotype"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["MCOfficer <mcofficer@gmx.de>"]
 license = "MIT"
 description = "The missing desktop-autotype for Bitwarden."
