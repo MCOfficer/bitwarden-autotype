@@ -21,7 +21,7 @@ pub fn prompt_bw_login(bitwarden_email: Option<String>) -> Result<(String, Strin
     let mut window = Window::new(100, 100, 400, 120, "Log into Bitwarden");
     window.set_icon(Some(ICON.clone()));
 
-    let email = Input::new(80, 20, 300, 30, "E-Mail");
+    let mut email = Input::new(80, 20, 300, 30, "E-Mail");
     let password = SecretInput::new(80, 70, 300, 30, "Password");
     let mut submit = Button::new(0, 0, 0, 0, "");
 
