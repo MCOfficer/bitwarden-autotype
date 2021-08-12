@@ -129,9 +129,9 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "1.1.7"
+version = "1.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "adca96b3859d71e204409f3dca18db08aa3659d5d21718aeccfbeef74f10a978"
+checksum = "471fefc1fc3e019d314d542637f5bf48bd72a678f5e9052167b9ac7bea7b0a38"
 dependencies = [
  "bitflags",
  "fltk-derive",
@@ -143,9 +143,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-derive"
-version = "1.1.5"
+version = "1.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b82eee250712509bd08ea230f7645e906e790a8d906e0a1bc326b06dd246a07"
+checksum = "712f09c29760a17e14a2f0d08a36b78bab82d5fbb3b2c3e17f3420f239351364"
 dependencies = [
  "quote",
  "syn",
@@ -153,9 +153,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-sys"
-version = "1.1.7"
+version = "1.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6970aa52bfe8a45264adbcbad906e02c5df110617102fd826c40e3e9259aac7f"
+checksum = "5cc5eabad4839df806d102049c44586233743cf6607e2d2829155bb9fe45775e"
 dependencies = [
  "cmake",
  "libc",
@@ -193,9 +193,9 @@ checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
 
 [[package]]
 name = "libc"
-version = "0.2.98"
+version = "0.2.99"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "320cfe77175da3a483efed4bc0adc1968ca050b098ce4f2f1c13a56626128790"
+checksum = "a7f823d141fe0a24df1e23b4af4e3c7ba9e5966ec514ea068c93024aa7deb765"
 
 [[package]]
 name = "lock_api"
