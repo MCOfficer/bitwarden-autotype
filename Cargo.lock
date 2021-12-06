@@ -129,9 +129,9 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "1.2.18"
+version = "1.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bdd28da73770760dc005fcdb749b45331c7637d4c1f042054c567c98863790fe"
+checksum = "e1047ed32bcb49609956d1da35703267a733179e514ad606e030ca711da45574"
 dependencies = [
  "bitflags",
  "fltk-sys",
@@ -140,9 +140,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-sys"
-version = "1.2.18"
+version = "1.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6818e7d90bac21472f79908e358390552755684bfce9332ae08db0f9415418ac"
+checksum = "76f644df7b9b362dad4361de2491e844281c98d95b56e0b07ff8e591311962b1"
 dependencies = [
  "cmake",
 ]
