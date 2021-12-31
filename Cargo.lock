@@ -149,9 +149,9 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "1.2.24"
+version = "1.2.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "074460d68d53a4ee2c3d01af3c27e1f6e8f868870319c2f2428b4e5d98b9bb3e"
+checksum = "7570d7e707dfa4bb013ad54348a0c6cc41c83cf45ee0121ba66345a73f83156f"
 dependencies = [
  "bitflags",
  "crossbeam-channel",
@@ -161,9 +161,9 @@ dependencies = [
 
 [[package]]
 name = "fltk-sys"
-version = "1.2.24"
+version = "1.2.25"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7484fe766483831b603396f1e1834950124b07660c03b2b4d3407c9230012116"
+checksum = "5c4ca0bfaa397e6d528b2b78b862b704a0ea77960c2f98f214482e401b63bd75"
 dependencies = [
  "cmake",
 ]
