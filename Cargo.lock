@@ -149,21 +149,22 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "1.2.26"
+version = "1.2.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2894b854989432cd0b13b48eb77178eb897f70b2aa5ef064575df226139ff668"
+checksum = "9f3072ed28d5e88adeca87dff44f5118a652f708f49d042d2e8b82e6af9a2600"
 dependencies = [
  "bitflags",
  "crossbeam-channel",
  "fltk-sys",
  "paste",
+ "ttf-parser",
 ]
 
 [[package]]
 name = "fltk-sys"
-version = "1.2.26"
+version = "1.2.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4cd352c677ae3a1cd20235368825cc6887847e502a753d01799ff2878d0950c9"
+checksum = "97668fb5d3d8cadb0a68ffcb42a6fb6be8e1e1d426d2f4efa5e43d4398b2583f"
 dependencies = [
  "cmake",
 ]
@@ -427,6 +428,12 @@ checksum = "c367fd7cdcdf19234aa104f7e03abe1be526018e4282af9f275bf436b9c9ad23"
 dependencies = [
  "winapi",
 ]
+
+[[package]]
+name = "ttf-parser"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ccbe8381883510b6a2d8f1e32905bddd178c11caef8083086d0c0c9ab0ac281"
 
 [[package]]
 name = "unicode-segmentation"
