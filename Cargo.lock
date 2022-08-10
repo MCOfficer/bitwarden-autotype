@@ -149,22 +149,23 @@ dependencies = [
 
 [[package]]
 name = "fltk"
-version = "1.3.6"
+version = "1.3.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80ab2f73e2c40921098e1d6b8e82887b37823dee2412ffab147219562251e0c0"
+checksum = "0c48372ad8f5053f9c1eb50db2f25b36e524bc087388605c6e932774d5d3ee0c"
 dependencies = [
  "bitflags",
  "crossbeam-channel",
  "fltk-sys",
+ "once_cell",
  "paste",
  "ttf-parser",
 ]
 
 [[package]]
 name = "fltk-sys"
-version = "1.3.5"
+version = "1.3.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fef608d4752f3eec2dc30818be069ead5a6f20d173cb3b154776812041e465d"
+checksum = "8d3afcc83ab18abd6bed3da1dc777ccf60ef6d73e137d529b43ecc9490194c77"
 dependencies = [
  "cmake",
 ]
@@ -238,6 +239,12 @@ checksum = "9a64b1ec5cda2586e284722486d802acf1f7dbdc623e2bfc57e65ca1cd099290"
 dependencies = [
  "autocfg",
 ]
+
+[[package]]
+name = "once_cell"
+version = "1.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "18a6dbe30758c9f83eb00cbea4ac95966305f5a7772f3f42ebfc7fc7eddbd8e1"
 
 [[package]]
 name = "parking_lot"
