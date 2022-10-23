@@ -1,3 +1,5 @@
+## Mostly abandoned - still works, but not being developed!
+
 # ![icon](https://raw.githubusercontent.com/MCOfficer/bitwarden-autotype/master/assets/icon.png) bitwarden-autotype
 #### The missing desktop-autotype for Bitwarden.
 
